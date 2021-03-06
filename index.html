@@ -8,13 +8,21 @@
     <script src="https://unpkg.com/aframe-animation-component@3.2.1/dist/aframe-animation-component.min.js"></script>
     <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
     <script src="https://unpkg.com/aframe-outline@%5E1.1.0/build/aframe-outline.min.js"></script>
+    
+
+      <!--A-Frame extras (including physics)-->
+      <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v3.13.1/dist/aframe-extras.min.js"></script>
+      <!--Compatibility with gblocks-->
+      <script src="https://cdn.rawgit.com/archilogic-com/aframe-gblock/6498b71d/dist/gblock.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
   </head>
   <body>
-    <a-assets>
+   
+    <a-scene>
+       <a-assets>
         <img id="snowy" src="./images/snowy.jpeg">
     </a-assets>
-    <a-scene>
-           <a-entity particle-system="preset: snow; particleCount: 10000"></a-entity>
+           <a-entity particle-system="preset: snow; "></a-entity>
       <a-sphere position="-10 0 -15" radius="2" material="shader: standard; color: #fff; metalness: 0; roughness: 1"></a-sphere>
       <a-sphere position="-10 2 -15" radius="1.7" material="shader: standard; color: #fff; metalness: 0; roughness: 1"></a-sphere>
       <a-sphere position="-10 4 -15" radius="1.3" material="shader: standard; color: #fff; metalness: 0; roughness: 1"></a-sphere>
@@ -40,14 +48,90 @@
         position="0 -1 0"
         rotation="-90 0 0"
         width="150"
-        height="50"></a-plane>
+        height="50"
+        ></a-plane>
       <a-entity geometry="primitive: sphere; radius: 50"
           material="shader: flat; src: #snowy"
           rotation="0 40 0"
           position="0 0 0"
-          scale="1 1 -1"></a-entity>
+          scale="1 1 -1"
+               ></a-entity>
       <a-entity light="type: ambient; color: #405e94"></a-entity>
       <a-entity light="type: directional; color: #FFF; intensity: 0.8" position="5 5 10"></a-entity>
+      
+      <a-entity class="player" id="player"
+                camera
+            jump-ability
+            universal-controls        
+            position="1 4 20">
+            
+            <a-cursor> </a-cursor>
+      </a-entity>
+          <a-entity id="ball_frame"></a-entity>
+<!--       <a-entity id ="camera" >
+
+      <a-camera user-height="1.6"><a-cursor></a-cursor></a-camera>
+    </a-entity> -->
     </a-scene>
+    
+    <script>
+    let ball_frame = document.querySelector('#ball_frame');
+let camera = document.querySelector('[camera]').object3D
+console.log(ball_frame)
+      console.log(camera)
+      
+            
+ 
+/** Creates the ball element that we append to the DOM
+  * in the throwBall() function. 
+  * @param {string} velocity, the ball's velocity
+  */
+function construct_ball(velocity) {
+  let position = [];
+  position.push(camera.position.x, camera.position.z);
+  let snowball = {
+    type: 'a-sphere',
+    radius: '1',
+    body: 'dynamic-body',
+    position: `${position[0]} 3 ${position[1]}`,
+    velocity: velocity
+  };
+  
+  let tag = `<${snowball.type} ${snowball.body} class='snowball' 
+  console.log(tag)
+  radius='${snowball.radius}' position='${snowball.position}'
+  velocity='${snowball.velocity}'></${snowball.type}>`;
+  return tag;
+}
+
+/** Here we actually append the created ball to the DOM. */
+function throwBall() {
+  console.log("in throwball")
+  let position = camera.getWorldDirection();
+  console.log(position)
+  let velocity = `${position.x * -25} 2 ${position.z * -25}`;
+  ball_frame.innerHTML = construct_ball(velocity);
+}
+
+ window.addEventListener('keydown', (event) => {
+   key=event.key
+   code=event.code
+   
+    if (code == 'Enter'){
+      console.log("here")
+      throwBall();
+    }
+  }
+    )
+
+// /** Throw every time the user clicks. */
+// window.addEventListener('click', e => {
+//   throwBall();
+// });
+
+
+
+
+    </script>
   </body>
 </html>
